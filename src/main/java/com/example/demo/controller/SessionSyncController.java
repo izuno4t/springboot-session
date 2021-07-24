@@ -11,15 +11,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/sync")
-public class SessionSyncController {
+public class SessionSyncController extends AbstractController {
 
     private static final Logger logger = LoggerFactory.getLogger(SessionSyncController.class);
 
     @GetMapping("/index")
-    public String index(HttpSession session){
+    public String index(HttpSession session) {
         session.setAttribute("foo", null);
         session.setAttribute("bar", null);
-
         logger.info("session foo={}", session.getAttribute("foo"));
         logger.info("session bar={}", session.getAttribute("bar"));
         return "clear session:" + session.getId();
@@ -44,7 +43,7 @@ public class SessionSyncController {
                 }
                 logger.info("wake up!");
                 session.setAttribute("foo", "wake up");
-            }else{
+            } else {
                 session.setAttribute("bar", "foo bar foo bar");
             }
         }
