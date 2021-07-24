@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/sync")
-public class SessionSyncController extends AbstractController {
+public class SessionSyncController {
 
     private static final Logger logger = LoggerFactory.getLogger(SessionSyncController.class);
 
