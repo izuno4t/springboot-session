@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
@@ -8,6 +9,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.util.WebUtils;
+
+import com.example.demo.util.SessionUtils;
 
 @RestController
 @RequestMapping("/sync")
@@ -25,10 +29,10 @@ public class SessionSyncController {
     }
 
     @GetMapping(value = "/{param}")
-    public String sayHello(@PathVariable String param, HttpSession session) {
+    public String sayHello(@PathVariable String param, HttpServletRequest request) {
         logger.info("param=" + param);
 
-        Object id = session.getId();
+        Object id = WebUtils.getSessionId(request);
         if (id == null) {
             logger.info("session not exist " + id);
             //session.setAttribute("p", p);
@@ -42,13 +46,13 @@ public class SessionSyncController {
                     e.printStackTrace();
                 }
                 logger.info("wake up!");
-                session.setAttribute("foo", "wake up");
+                SessionUtils.setAttribute(request, "foo", "wake up");
             } else {
-                session.setAttribute("bar", "foo bar foo bar");
+                SessionUtils.setAttribute(request, "bar", "foo bar foo bar");
             }
         }
-        logger.info("session foo={}", session.getAttribute("foo"));
-        logger.info("session bar={}", session.getAttribute("bar"));
+        logger.info("session foo={}", (String) SessionUtils.getAttribute(request, "foo"));
+        logger.info("session bar={}", (String) SessionUtils.getAttribute(request, "bar"));
 
         return "Hello,World! " + param;
     }
