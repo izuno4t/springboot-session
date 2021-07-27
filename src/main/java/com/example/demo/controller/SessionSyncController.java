@@ -47,8 +47,11 @@ public class SessionSyncController {
                 }
                 logger.info("wake up!");
                 SessionUtils.setAttribute(request, "foo", "wake up");
-            } else {
-                SessionUtils.setAttribute(request, "bar", "foo bar foo bar");
+            } else if(param.equals("read")) {
+                logger.info("session foo={}", (String) SessionUtils.getAttribute(request, "foo"));
+                logger.info("session bar={}", (String) SessionUtils.getAttribute(request, "bar"));
+            }else{
+                    SessionUtils.setAttribute(request, "bar", "foo bar foo bar");
             }
         }
         logger.info("session foo={}", (String) SessionUtils.getAttribute(request, "foo"));
