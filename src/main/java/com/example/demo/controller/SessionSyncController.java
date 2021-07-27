@@ -1,8 +1,6 @@
 package com.example.demo.controller;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
+import com.example.demo.util.SessionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,7 +9,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.WebUtils;
 
-import com.example.demo.util.SessionUtils;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 @RestController
 @RequestMapping("/sync")
@@ -21,10 +20,10 @@ public class SessionSyncController {
 
     @GetMapping("/index")
     public String index(HttpSession session) {
+        session.setAttribute("sleep", null);
         session.setAttribute("foo", null);
-        session.setAttribute("bar", null);
-        logger.info("session foo={}", session.getAttribute("foo"));
-        logger.info("session bar={}", session.getAttribute("bar"));
+        logger.info("session foo={}", session.getAttribute("sleep"));
+        logger.info("session bar={}", session.getAttribute("foo"));
         return "clear session:" + session.getId();
     }
 
@@ -40,22 +39,30 @@ public class SessionSyncController {
             logger.info("session existed ，id=" + id);
             if (param.equals("sleep")) {
                 try {
-                    Thread.sleep(15000);
+                    Thread.sleep(5000);
                 } catch (InterruptedException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
                 logger.info("wake up!");
-                SessionUtils.setAttribute(request, "foo", "wake up");
-            } else if(param.equals("read")) {
-                logger.info("session foo={}", (String) SessionUtils.getAttribute(request, "foo"));
-                logger.info("session bar={}", (String) SessionUtils.getAttribute(request, "bar"));
-            }else{
-                    SessionUtils.setAttribute(request, "bar", "foo bar foo bar");
+                SessionUtils.setAttribute(request, "sleep", "wake up");
+            } else if (param.equals("read")) {
+                logger.info("session foo={}", (String) SessionUtils.getAttribute(request, "sleep"));
+                logger.info("session bar={}", (String) SessionUtils.getAttribute(request, "foo"));
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                logger.info("session foo={}", (String) SessionUtils.getAttribute(request, "sleep"));
+                logger.info("session bar={}", (String) SessionUtils.getAttribute(request, "foo"));
+            } else {
+                SessionUtils.setAttribute(request, "foo", "foo bar foo bar");
             }
         }
-        logger.info("session foo={}", (String) SessionUtils.getAttribute(request, "foo"));
-        logger.info("session bar={}", (String) SessionUtils.getAttribute(request, "bar"));
+        logger.info("session foo={}", (String) SessionUtils.getAttribute(request, "sleep"));
+        logger.info("session bar={}", (String) SessionUtils.getAttribute(request, "foo"));
 
         return "Hello,World! " + param;
     }
